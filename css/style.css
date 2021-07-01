@@ -1,0 +1,56 @@
+.add{
+    width: 300px;
+    border: black 2px solid;
+    padding: 5px;
+}
+
+.add_film{
+    margin-top: 15px;
+    border: black 2px solid;
+    width: 700px;
+    padding: 5px;
+}
+
+.alert{
+    font-size: 20px;
+    background-color: red;
+    text-align: center;
+    font-weight: bold;
+    border-radius: 30px;
+}
+
+.success{
+    font-size: 20px;
+    background-color: #4fff3b;
+    text-align: center;
+    font-weight: bold;
+    border-radius: 30px;
+}
+
+
+/* Убирает стрелочки в input number
+/* Не моё, украл, не пинайте
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
+a{
+    color: black;
+    text-decoration: none;
+}
+
+.delete{
+    background-color: red;
+}
+.delete:hover{
+    background-color: darkred;
+}
