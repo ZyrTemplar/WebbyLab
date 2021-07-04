@@ -8,10 +8,9 @@
 <body>
 <?php
 require ("bd_conf/bd_connect.php");
-$temp=$connect->query('SELECT films.id,films.title, films.year, films.format FROM films ORDER BY title');
-$actors=$connect->query('SELECT films.title, actors.actor FROM actors, films, films_to_actors WHERE films.id=films_to_actors.film_id AND actors.id=films_to_actors.actor_id');
+$temp=$connect->query('SELECT films.id,films.title, films.year, films.format FROM films ORDER BY title COLLATE  utf8_unicode_ci');
+$actors=$connect->query('SELECT films.title, actors.actor FROM actors, films, films_to_actors WHERE actors.actor LIKE "%'.$_POST['actor_search'].'%" AND actors.id=films_to_actors.actor_id AND films.id=films_to_actors.film_id');
 $films=array();
-$sorted=array();
 $count=0;
 $found=false;
 foreach ($temp as $film){
@@ -27,23 +26,17 @@ foreach ($temp as $film){
     foreach ($actors as $actor){
         if ($film['title']==$actor['title']) {
             array_push($films[$count]['actors'], $actor['actor']);
+            $found=true;
         }
     }
     $count++;
 }
-
+$count=0;
 foreach ($films as $film){
-        foreach ($film as $key=>$val){
-            if ($key=='actors') {
-                foreach ($val as $number=> $value){
-                    if ($value == $_POST['actor_search']) {
-                        array_push($sorted, $film);
-                        $found = true;
-                    }
-                }
-
-            }
-        }
+    if (empty($film['actors'])){
+        unset($films[$count]);
+    }
+    $count++;
 }
 
 echo "<table border='1' cellpadding='4'>";
@@ -56,7 +49,7 @@ echo " <thead>
     <th>Актеры</th>
    </tr>
    </thead>";
-foreach ($sorted as $film){
+foreach ($films as $film){
         foreach ($film as $key=>$val){
             if ($key=='actors'){
                 echo "<td>";

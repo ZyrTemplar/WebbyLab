@@ -1,9 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
 <?php
 session_start();
 require ("bd_conf/bd_connect.php");
 ?>
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset='UTF-8'>
     <title>WebbyLab</title>
@@ -21,6 +21,22 @@ require ("bd_conf/bd_connect.php");
             echo '<br>';
     }
     unset($_SESSION['success_file']);
+    if (!empty($_SESSION['error_file'])){
+        echo '<div class="alert">';
+            echo $_SESSION['error_file'];
+            echo '<br>';
+        echo '</div>';
+            echo '<br>';
+    }
+    unset($_SESSION['error_file']);
+    if (!empty($_SESSION['repeats'])){
+        echo '<div class="alert">';
+            echo $_SESSION['repeats'];
+            echo '<br>';
+        echo '</div>';
+            echo '<br>';
+    }
+    unset($_SESSION['repeats']);
 ?>
     <form action="file_open.php" enctype="multipart/form-data" method="post">
         <input type="hidden" name="MAX_FILE_SIZE" value="30000" />

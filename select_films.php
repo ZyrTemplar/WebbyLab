@@ -8,7 +8,19 @@
 <body>
 <?php
 require ("bd_conf/bd_connect.php");
-$temp=$connect->query('SELECT films.id,films.title, films.year, films.format FROM films ORDER BY title');
+$col_films=10;
+$page=$_GET['page'];
+$all=$connect->query('SELECT COUNT(*) FROM films');
+foreach ($all as $value){
+    $films_count=$value['COUNT(*)'];
+}
+$total =intval(($films_count - 1) / $col_films) + 1;
+$page=intval($page);
+if(empty($page) or $page < 0) $page = 1;
+if($page > $total) $page = $total;
+$start = $page * $col_films - $col_films;
+$temp=$connect->query("SELECT films.id,films.title, films.year, films.format FROM films ORDER BY title COLLATE  utf8_unicode_ci LIMIT ".$start.", ".$col_films);
+print_r($connect->error);
 $actors=$connect->query('SELECT films.title, actors.actor FROM actors, films, films_to_actors WHERE films.id=films_to_actors.film_id AND actors.id=films_to_actors.actor_id');
 $films=array();
 $count=0;
@@ -54,12 +66,31 @@ foreach ($films as $film){
         }
         echo "</td>";
     }
-    echo "<td class='delete'>";
-    echo "<a href='delete_film.php?film_id=".$film['id']."'>Удалить фильм</a>";
+    echo "<td>";
+    echo "<button class='delete' id='".$film['id']."'>Удалить фильм</a>";
     echo "</td>";
     echo "</tr>";
 }
 echo "</table>";
+if ($page != 1) $pervpage = '<a href= /select_films.php/page?page=1><<</a>
+                               <a href= /select_films.php/page?page=' . ($page - 1) . '><</a> ';
+if ($page != $total) $nextpage = ' <a href= /select_films.php/page?page=' . ($page + 1) . '>></a>
+                                   <a href= /select_films.php/page?page=' . $total . '>>></a>';
+if ($page - 2 > 0) $page2left = ' <a href= /select_films.php/page?page=' . ($page - 2) . '>' . ($page - 2) . '</a> | ';
+if ($page - 1 > 0) $page1left = '<a href= /select_films.php/page?page=' . ($page - 1) . '>' . ($page - 1) . '</a> | ';
+if ($page + 2 <= $total) $page2right = ' | <a href= /select_films.php/page?page=' . ($page + 2) . '>' . ($page + 2) . '</a>';
+if ($page + 1 <= $total) $page1right = ' | <a href= /select_films.php/page?page=' . ($page + 1) . '>' . ($page + 1) . '</a>';
+echo $pervpage . $page2left . $page1left . '<b>' . $page . '</b>' . $page1right . $page2right . $nextpage;
 ?>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $('.delete').click(function (e) {
+        temp=confirm('Точно удалить?');
+        if (temp===true){
+            href='delete_film.php?film_id="'+e.target.id+'"'
+            window.location.href = href;
+        }
+    })
+</script>
 </body>
 </html>

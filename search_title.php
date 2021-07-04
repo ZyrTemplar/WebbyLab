@@ -8,7 +8,8 @@
 <body>
 <?php
 require ("bd_conf/bd_connect.php");
-$temp=$connect->query('SELECT films.id,films.title, films.year, films.format FROM films ORDER BY title');
+$query='SELECT films.id,films.title, films.year, films.format FROM films WHERE films.title LIKE "%'.$_POST['title_search'].'%" ORDER BY title COLLATE  utf8_unicode_ci';
+$temp=$connect->query($query);
 $actors=$connect->query('SELECT films.title, actors.actor FROM actors, films, films_to_actors WHERE films.id=films_to_actors.film_id AND actors.id=films_to_actors.actor_id');
 $films=array();
 $count=0;
@@ -41,27 +42,25 @@ echo " <thead>
    </tr>
    </thead>";
 foreach ($films as $film){
-    if ($film['title']==$_POST['title_search']){
-        foreach ($film as $key=>$val){
-            if ($key=='actors'){
-                echo "<td>";
-                foreach ($val as $number=> $value){
-                    if ($number==0) echo $value;
-                    else echo ', '.$value;
-                }
+    foreach ($film as $key=>$val){
+        if ($key=='actors'){
+            echo "<td>";
+            foreach ($val as $number=> $value){
+                if ($number==0) echo $value;
+                else echo ', '.$value;
             }
-            else{
-                echo "<td>";
-                echo $val;
-            }
-            echo "</td>";
         }
-        echo "<td class='delete'>";
-        echo "<a href='delete_film.php?film_id=".$film['id']."'>Удалить фильм</a>";
+        else{
+            echo "<td>";
+            echo $val;
+        }
         echo "</td>";
-        echo "</tr>";
-        $found=true;
     }
+    echo "<td class='delete'>";
+    echo "<a href='delete_film.php?film_id=".$film['id']."'>Удалить фильм</a>";
+    echo "</td>";
+    echo "</tr>";
+    $found=true;
 }
 if ($found==false){
     echo '<tr><td>Фильм не найден</td></tr>';
